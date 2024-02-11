@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <h1>Hi there</h1>
+    <div>
+      Best
+      <ul class="usersView"></ul>
+    </div>
+    <form class="container" action="/api/users/create" method="POST">
+      <div class="mb-3">
+        <label for="" class="form-label"
+          >Name
+
+          <input
+            type="text"
+            class="form-control"
+            name=""
+            id=""
+            aria-describedby="helpId"
+            placeholder=""
+          />
+        </label>
+        <label for="" class="form-label"
+          >age
+
+          <input
+            type="number"
+            class="form-control"
+            name=""
+            id=""
+            aria-describedby="helpId"
+            placeholder=""
+          />
+        </label>
+        <div class="mb-3">
+          <label for="hobbies" class="form-label">Choose hobbies:</label>
+          <select
+            id="hobbies"
+            class="form-select form-select-lg"
+            name="hobbies"
+            multiple
+          >
+            <option value="reading">Reading</option>
+            <option value="gaming">Gaming</option>
+            <option value="cooking">Cooking</option>
+            <option value="sports">Sports</option>
+            <option value="music">Music</option>
+          </select>
+        </div>
+      </div>
+      <p>You can select several by pressing ctrl</p>
+
+      <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+    <script>
+      const $usersView = document.querySelector(".usersView");
+      const user = [];
+
+      async function loadUsers() {
+        try {
+          const response = await fetch(`/api/users`, {
+            signal: controller.signal,
+          });
+          const users = await response.json();
+          users.forEach(proccessUser);
+        } catch (e) {
+          //if reason is client timeout
+          // loadUsers();
+        }
+      }
+
+      function proccessUser(user) {
+        const li = document.createElement("li");
+        li.innerHTML = JSON.stringify(user);
+        $usersView.appendChild(li);
+        maxId = user.id;
+      }
+
+      loadUsers();
+    </script>
+  </body>
+</html>

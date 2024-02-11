@@ -7,6 +7,8 @@ const HOST = `${DOMAIN}:${PORT}`;
 
 const app = createServer((request, response) => {
   const parsedUrl = new URL(request.url, HOST);
+  const { method } = request;
+  console.log(method);
   request.appParsedUrl = parsedUrl;
 
   const reqFn =
