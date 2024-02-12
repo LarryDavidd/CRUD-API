@@ -12,7 +12,6 @@
   <body>
     <h1>Hi there</h1>
     <div>
-      Best
       <ul class="usersView"></ul>
     </div>
     <form id="userForm" class="container">
@@ -55,14 +54,12 @@
 
     <script>
       const usersView = document.querySelector(".usersView");
-      const user = [];
 
       async function loadUsers() {
         try {
           usersView.innerHTML = "";
           const response = await fetch(`/api/users`);
           const users = await response.json();
-          console.log(users);
           users.forEach(proccessUser);
         } catch (e) {
           console.log("error");
@@ -70,18 +67,99 @@
           // loadUsers();
         }
       }
-
+      // JSON.stringify(user);
       function proccessUser(user) {
         const li = document.createElement("li");
-        li.innerHTML = JSON.stringify(user);
+        li.innerHTML = `
+              <form id="userChangeForm" class="container">
+                <input type="hidden" name="id" value = ${user.id}>
+            <div class="d-flex">
+              <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="name"
+                  id="name"
+                  aria-describedby="helpId"
+                  placeholder=""
+                  value = ${user.name}
+                />
+              </div>
+              <div class="mb-3">
+                <label for="age" class="form-label">Age</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="age"
+                  id="age"
+                  aria-describedby="helpId"
+                  placeholder=""
+                  value = ${user.age}
+                />
+              </div>
+              <div class="mb-3">
+                <label for="hobbies" class="form-label">write your hobbies:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="hobbies"
+                  id="hobbies"
+                  aria-describedby="helpId"
+                  placeholder=""
+                  value = ${user.hobbies.join(" ")}
+                />
+              </div>
+
+              <button type="submit" class="btn btn-primary">Change</button>
+              <button class="btn btn-primary remove__button">Remove</button>
+            </div>
+          </form>
+              `;
+        console.log(li.getElementsByTagName("form")[0]);
+        li.getElementsByTagName("form")[0].addEventListener("submit", (event) =>
+          chengeUser(event)
+        );
+        li.getElementsByClassName("remove__button")[0].addEventListener(
+          "click",
+          (e) => removeUser(e)
+        );
+
         usersView.appendChild(li);
-        maxId = user.id;
       }
 
       loadUsers();
 
       const form = document.getElementById("userForm");
-      form.addEventListener("submit", async (event) => {
+      form.addEventListener("submit", async (event) => addNewUser(event));
+
+      const chengeUser = async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const userData = Object.fromEntries(formData.entries());
+        console.log(userData, formData);
+
+        try {
+          const response = await fetch("/api/users", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to create user");
+          }
+          loadUsers();
+          console.log("User changed successfully");
+        } catch (error) {
+          console.error(error.message);
+        }
+      };
+
+      const addNewUser = async (event) => {
         event.preventDefault();
 
         const formData = new FormData(form);
@@ -105,7 +183,33 @@
         } catch (error) {
           console.error(error.message);
         }
-      });
+      };
+
+      const removeUser = async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const userData = Object.fromEntries(formData.entries());
+        console.log(userData, formData);
+
+        try {
+          const response = await fetch("/api/users", {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to create user");
+          }
+          loadUsers();
+          console.log("User created successfully");
+        } catch (error) {
+          console.error(error.message);
+        }
+      };
     </script>
   </body>
 </html>

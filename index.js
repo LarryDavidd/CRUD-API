@@ -1,15 +1,14 @@
 import { createServer } from "http";
 import { routes } from "#app/router.js";
+import "dotenv/config";
 
 const DOMAIN = "http://localhost";
-const PORT = 3000;
+const PORT = Number(process.env.PORT);
 const HOST = `${DOMAIN}:${PORT}`;
 
 const app = createServer((request, response) => {
   const parsedUrl = new URL(request.url, HOST);
   const { method } = request;
-  console.log(method);
-  console.log(routes[parsedUrl.pathname][method], parsedUrl.pathname);
   request.appParsedUrl = parsedUrl;
 
   const reqFn =
