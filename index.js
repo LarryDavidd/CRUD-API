@@ -9,10 +9,12 @@ const app = createServer((request, response) => {
   const parsedUrl = new URL(request.url, HOST);
   const { method } = request;
   console.log(method);
+  console.log(routes[parsedUrl.pathname][method], parsedUrl.pathname);
   request.appParsedUrl = parsedUrl;
 
   const reqFn =
-    routes[parsedUrl.pathname] ?? ((_, response) => response.end("404"));
+    routes[parsedUrl.pathname][method] ??
+    ((_, response) => response.end("404"));
   reqFn(request, response);
 });
 

@@ -1,9 +1,20 @@
-import { getUsers, addUsers } from "./controllers/users/flow.js";
+import {
+  getUsers,
+  addUsers,
+  chengeUser,
+  removeUser,
+} from "./controllers/users/user.js";
 import { favicon, home } from "./controllers/static.js";
 
 export const routes = {
-  "/": home,
-  "/favicon.ico": favicon,
-  "/api/users": getUsers,
-  "/api/users/create": addUsers,
+  "/": {
+    GET: home,
+  },
+  "/favicon.ico": { GET: favicon },
+  "/api/users": {
+    GET: getUsers,
+    POST: addUsers,
+    PUT: chengeUser,
+    DELETE: removeUser,
+  },
 };
