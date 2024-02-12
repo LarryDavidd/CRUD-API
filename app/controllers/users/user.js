@@ -68,8 +68,13 @@ export const removeUser = (req, res) => {
   req.on("end", () => {
     const userData = JSON.parse(data);
     const { id } = userData;
-    users = users.filter((user) => user.id !== id);
-    console.log(users, id, userData);
+    users = users.filter((user) => user.id != id);
+    console.log(
+      users,
+      id,
+      userData,
+      users.filter((user) => user.id !== id)
+    );
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify({ message: "Data received successfully" }));

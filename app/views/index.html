@@ -116,13 +116,11 @@
             </div>
           </form>
               `;
-        console.log(li.getElementsByTagName("form")[0]);
-        li.getElementsByTagName("form")[0].addEventListener("submit", (event) =>
-          chengeUser(event)
-        );
+        const form = li.getElementsByTagName("form")[0];
+        form.addEventListener("submit", (event) => chengeUser(e, form));
         li.getElementsByClassName("remove__button")[0].addEventListener(
           "click",
-          (e) => removeUser(e)
+          (e) => removeUser(e, form)
         );
 
         usersView.appendChild(li);
@@ -133,7 +131,7 @@
       const form = document.getElementById("userForm");
       form.addEventListener("submit", async (event) => addNewUser(event));
 
-      const chengeUser = async (event) => {
+      const chengeUser = async (event, form) => {
         event.preventDefault();
 
         const formData = new FormData(form);
@@ -185,7 +183,7 @@
         }
       };
 
-      const removeUser = async (event) => {
+      const removeUser = async (event, form) => {
         event.preventDefault();
 
         const formData = new FormData(form);
