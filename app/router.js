@@ -3,6 +3,7 @@ import {
   addUsers,
   chengeUser,
   removeUser,
+  getUser,
 } from "./controllers/users/user.js";
 import { favicon, home } from "./controllers/static.js";
 
@@ -18,5 +19,6 @@ export const routes = {
   "/api/users/:id": {
     PUT: chengeUser,
     DELETE: removeUser,
+    GET: getUser,
   },
 };
