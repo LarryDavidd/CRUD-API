@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import { validate, v4 } from "uuid";
 
 let userFakeAi = 0;
 let users = [];
@@ -20,6 +21,13 @@ export const addUsers = (req, res) => {
   req.on("end", () => {
     const userData = JSON.parse(data);
     const { name, age, hobbies } = userData;
+
+    if (!name || !age || !hobbies) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "Missing required fields" }));
+      return;
+    }
+
     const newUser = {
       id: userFakeAi++,
       name: name,
@@ -27,7 +35,7 @@ export const addUsers = (req, res) => {
       hobbies: hobbies.split(" "),
     };
     users.push(newUser);
-    res.statusCode = 200;
+    res.statusCode = 201;
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify({ message: "Data received successfully" }));
   });
@@ -43,6 +51,13 @@ export const chengeUser = (req, res) => {
   req.on("end", () => {
     const userData = JSON.parse(data);
     const { id, name, age, hobbies } = userData;
+
+    if (!name || !age || !hobbies) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "Missing required fields" }));
+      return;
+    }
+
     users.forEach((user) => {
       if (user.id == id)
         user = {
@@ -59,24 +74,20 @@ export const chengeUser = (req, res) => {
 };
 
 export const removeUser = (req, res) => {
-  let data = "";
-
-  req.on("data", (chunk) => {
-    data += chunk.toString();
-  });
-
-  req.on("end", () => {
-    const userData = JSON.parse(data);
-    const { id } = userData;
+  const id = req.params.id;
+  const userIndex = users.findIndex((user) => user.id === id);
+  if (userIndex !== -1) {
     users = users.filter((user) => user.id != id);
-    console.log(
-      users,
-      id,
-      userData,
-      users.filter((user) => user.id !== id)
-    );
-    res.statusCode = 200;
+    res.statusCode = 204;
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify({ message: "Data received successfully" }));
-  });
+  } else if (!validate(id)) {
+    res.statusCode = 400;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ message: "Incorrect user id" }));
+  } else {
+    res.statusCode = 404;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ message: "User not found" }));
+  }
 };

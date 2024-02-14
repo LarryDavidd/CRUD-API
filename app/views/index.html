@@ -139,7 +139,7 @@
         console.log(userData, formData);
 
         try {
-          const response = await fetch("/api/users", {
+          const response = await fetch("/api/users" + userData[id], {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -191,12 +191,11 @@
         console.log(userData, formData);
 
         try {
-          const response = await fetch("/api/users", {
+          const response = await fetch("/api/users" + userData[id], {
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(userData),
           });
 
           if (!response.ok) {

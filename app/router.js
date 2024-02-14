@@ -14,6 +14,8 @@ export const routes = {
   "/api/users": {
     GET: getUsers,
     POST: addUsers,
+  },
+  "/api/users/:id": {
     PUT: chengeUser,
     DELETE: removeUser,
   },
