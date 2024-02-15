@@ -9,13 +9,13 @@ This is a simple CRUD API implementation using an in-memory database.
 1. Clone the repository
 
 ```
-git clone https://github.com/andrplko/crud-api.git
+git clone hhttps://github.com/LarryDavidd/CRUD-API.git
 ```
 
-2. Navigate to the `crud-api` directory
+2. Navigate to the `CRUD-API` directory
 
 ```
-cd crud-api
+cd CRUD-API
 ```
 
 3. Install all dependencies
@@ -30,8 +30,6 @@ npm install
 
 - `start:dev`: starts the server with nodemon (for development).
 - `start:prod`: starts the build process and then runs the bundled file
-- `start:multi`: starts multiple instances of application using the Node.js Cluster API with a load balancer (using Round-robin algorithm)
-- `test`: run tests with jest
 
 ### ESLint
 

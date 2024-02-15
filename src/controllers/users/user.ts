@@ -8,7 +8,7 @@ interface User {
   hobbies: string[];
 }
 
-let users: User[] = [];
+const users: User[] = [];
 
 export const getUsers = (_: IncomingMessage, res: ServerResponse) => {
   res.statusCode = 200;
