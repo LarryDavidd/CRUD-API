@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <h1>Hi there</h1>
+    <div>
+      <ul class="usersView"></ul>
+    </div>
+    <form id="userForm" class="container">
+      <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input
+          type="text"
+          class="form-control"
+          name="name"
+          id="name"
+          aria-describedby="helpId"
+          placeholder=""
+          value="lfks;dj"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="age" class="form-label">Age</label>
+        <input
+          type="number"
+          class="form-control"
+          name="age"
+          id="age"
+          aria-describedby="helpId"
+          placeholder=""
+          value="55"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="hobbies" class="form-label">write your hobbies:</label>
+        <input
+          type="text"
+          class="form-control"
+          name="hobbies"
+          id="hobbies"
+          aria-describedby="helpId"
+          placeholder=""
+          value="sfdfsd"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+
+    <form id="searchUserForm" class="container">
+      <div class="mb-3">
+        <label for="id" class="form-label">id</label>
+        <input
+          type="text"
+          class="form-control"
+          name="id"
+          id="id"
+          aria-describedby="helpId"
+          placeholder=""
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary">Find</button>
+    </form>
+
+    <script>
+      const usersView = document.querySelector(".usersView");
+
+      async function loadUsers() {
+        try {
+          usersView.innerHTML = "";
+          const response = await fetch(`/api/users`);
+          const users = await response.json();
+          users.forEach(proccessUser);
+        } catch (e) {
+          console.log("error");
+          //if reason is client timeout
+          // loadUsers();
+        }
+      }
+      // JSON.stringify(user);
+      function proccessUser(user) {
+        const li = document.createElement("li");
+        li.innerHTML = `
+              <form id="userChangeForm" class="container">
+                <input type="hidden" name="id" value = ${user.id}>
+            <div class="d-flex">
+              <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="name"
+                  id="name"
+                  aria-describedby="helpId"
+                  placeholder=""
+                  value = ${user.name}
+                />
+              </div>
+              <div class="mb-3">
+                <label for="age" class="form-label">Age</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="age"
+                  id="age"
+                  aria-describedby="helpId"
+                  placeholder=""
+                  value = ${user.age}
+                />
+              </div>
+              <div class="mb-3">
+                <label for="hobbies" class="form-label">write your hobbies:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="hobbies"
+                  id="hobbies"
+                  aria-describedby="helpId"
+                  placeholder=""
+                  value = ${user.hobbies.join(" ")}
+                />
+              </div>
+
+              <button class="btn btn-primary change__button">Change</button>
+              <button class="btn btn-primary remove__button">Remove</button>
+            </div>
+          </form>
+              `;
+        const form = li.getElementsByTagName("form")[0];
+        li.getElementsByClassName("remove__button")[0].addEventListener(
+          "click",
+          (e) => removeUser(e, form)
+        );
+        li.getElementsByClassName("change__button")[0].addEventListener(
+          "click",
+          (e) => chengeUser(e, form)
+        );
+
+        usersView.appendChild(li);
+      }
+
+      loadUsers();
+
+      const form = document.getElementById("userForm");
+      form.addEventListener("submit", async (event) => addNewUser(event));
+
+      const chengeUser = async (event, form) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const userData = Object.fromEntries(formData.entries());
+        console.log(userData, formData);
+
+        try {
+          const response = await fetch("/api/users/" + userData.id, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to change user");
+          }
+          loadUsers();
+          console.log("User changed successfully");
+        } catch (error) {
+          console.error(error.message);
+        }
+      };
+
+      const addNewUser = async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const userData = Object.fromEntries(formData.entries());
+        console.log(userData, formData);
+
+        try {
+          const response = await fetch("/api/users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to create user");
+          }
+          loadUsers();
+          console.log("User created successfully");
+        } catch (error) {
+          console.error(error.message);
+        }
+      };
+
+      const removeUser = async (event, form) => {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        const userData = Object.fromEntries(formData.entries());
+        console.log(userData, formData);
+
+        try {
+          const response = await fetch("/api/users/" + userData.id, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete user");
+          }
+          loadUsers();
+          console.log("User deleted successfully");
+        } catch (error) {
+          console.error(error.message);
+        }
+      };
+
+      const searchUserForm = document.getElementById("searchUserForm");
+      searchUserForm.addEventListener("submit", async (event) =>
+        getUser(event)
+      );
+      const getUser = async (event) => {
+        event.preventDefault();
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const userData = Object.fromEntries(formData.entries());
+        console.log(userData, formData);
+        try {
+          const response = await fetch("/api/users/" + userData.id, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const data = await response.json();
+          console.log(data);
+
+          if (!response.ok) {
+            throw new Error("Failed to get user");
+          }
+        } catch (error) {
+          console.error(error.message);
+        }
+      };
+    </script>
+  </body>
+</html>
